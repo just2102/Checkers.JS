@@ -33,3 +33,8 @@ header {
     cursor: pointer;
     transform: scale(1.02);
 }
+
+/*  */
+.possible-move {
+    background-color: blueviolet;
+}
