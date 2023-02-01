@@ -1,5 +1,5 @@
-import { currentTurn, forgetPlayers, jump, player1, player2, setPlayers } from "./player.js";
-import { setPlayerNames, setCurrentTurn } from "./player.js";
+import { currentTurn, forgetPlayers, jump, player1, player2, setPlayers } from "./Player.js";
+import { setPlayerNames, setCurrentTurn } from "./Player.js";
 
 let gamefield = [
   [0, 1, 0, 1, 0, 1, 0, 1],
