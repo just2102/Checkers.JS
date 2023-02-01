@@ -9,19 +9,26 @@
     <script type="module" src="./index.js" defer></script>
   </head>
   <body>
-    <header>Checkers!</header>
+    <header>
+      <h2>Checkers!</h2>
+      <div id="whose_turn" class="hidden"></div>
+      <div id="score" class="hidden">
+        <span id="score_white">Whites: 12 </span>
+        <span id="score_black">Browns: 12</span>
+      </div>
+    </header>
     <div id="inputs">
       <div>
-        <label for="player1_name">Player 1 (whites) name: </label>
+        <label for="player1_name">Player 1: </label>
         <input type="text" id="player1_name" />
       </div>
       <div>
-        <label for="player2_name">Player 2 (blacks) name: </label>
+        <label for="player2_name">Player 2: </label>
         <input type="text" id="player2_name" />
       </div>
       <button id="start_game_button">Start game!</button>
     </div>
-    <div id="grid"></div>
-    <div id="whose_turn"></div>
+    <div id="grid" class="hidden"></div>
+
   </body>
 </html>

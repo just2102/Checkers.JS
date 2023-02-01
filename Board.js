@@ -1,4 +1,4 @@
-import { currentTurn, player1, player2, setPlayers } from "./player.js";
+import { currentTurn, jump, player1, player2, setPlayers } from "./player.js";
 import { setPlayerNames, setCurrentTurn } from "./player.js";
 
 let gamefield = [
@@ -47,10 +47,17 @@ const hideInputs = () => {
 };
 
 const makeField = () => {
+  // display hidden elements (grid and score in the header)
   let grid = document.getElementById("grid");
+  grid.classList.remove("hidden")
+  let score = document.getElementById("score")
+  score.classList.remove("hidden")
+  let whoseTurnField = document.getElementById("whose_turn")
+  whoseTurnField.classList.remove("hidden")
+
+  // generate cells
   for (let i = 0; i < gamefield.length; i++) {
     for (let j = 0; j < gamefield[i].length; j++) {
-
       let cell = document.createElement("div");
       cell.setAttribute("class", "cell");
       cell.setAttribute('id',`${i}/${j}`)
@@ -219,13 +226,19 @@ const makeMove = (moveId) => {
   let [selectedRow, selectedCol] = selectedpiece.split("-").map(Number);
   let [targetRow, targetCol] = moveId.split("-").map(Number);
 
+  // if player hit an enemy, update the amount of pieces players have
+  // if player 1 jumps player 2
+  if (gamefield[selectedRow][selectedCol]===1 && gamefield[targetRow][targetCol]===2) {
+    jump(1)
+  } else if (gamefield[selectedRow][selectedCol]===2 && gamefield[targetRow][targetCol]===1) {
+    jump(2)
+  }
+
   // empty previous piece and fill target piece (in business logic)
   gamefield[targetRow][targetCol] = gamefield[selectedRow][selectedCol];
   gamefield[selectedRow][selectedCol] = 0;
-
   // update styles
   let selectedpieceElement = document.getElementById(selectedpiece);
-
   let targetpieceElement = document.getElementById(moveId);
   // remove .possible-move class from previously possible pieces and remove event listener
   // also remove 'white' class if there was a white piece previously;
