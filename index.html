@@ -7,15 +7,17 @@
     <title>Checkers.JS</title>
     <link rel="stylesheet" href="index.css" />
     <script type="module" src="./index.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   </head>
   <body>
     <header>
       <h2>Checkers!</h2>
       <div id="whose_turn" class="hidden"></div>
       <div id="score" class="hidden">
-        <span id="score_white">Whites: 12 </span>
-        <span id="score_black">Browns: 12</span>
+        <span id="score_white"></span>
+        <span id="score_black"></span>
       </div>
+      <button id="restart_game_button" class="hidden">Restart</button>
     </header>
     <div id="inputs">
       <div>

@@ -1,4 +1,4 @@
-import { currentTurn, jump, player1, player2, setPlayers } from "./player.js";
+import { currentTurn, forgetPlayers, jump, player1, player2, setPlayers } from "./player.js";
 import { setPlayerNames, setCurrentTurn } from "./player.js";
 
 let gamefield = [
@@ -13,6 +13,20 @@ let gamefield = [
   [0, 2, 0, 2, 0, 2, 0, 2],
   [2, 0, 2, 0, 2, 0, 2, 0],
 ];
+const resetGamefield = () => {
+  gamefield = [
+    [0, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 0],
+    [0, 1, 0, 1, 0, 1, 0, 1],
+  
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+  
+    [2, 0, 2, 0, 2, 0, 2, 0],
+    [0, 2, 0, 2, 0, 2, 0, 2],
+    [2, 0, 2, 0, 2, 0, 2, 0],
+  ]
+}
 // hard code diagonal cells (possible moves)
 const possibleMoves = [
   [0, 1, 0, 1, 0, 1, 0, 1],
@@ -33,6 +47,7 @@ const isPossible = (cellId) => {
 
 
 export const startGame = () => {
+  showRestartButton()
   setPlayerNames();
   setPlayers();
   console.log(player1);
@@ -42,9 +57,36 @@ export const startGame = () => {
   setCurrentTurn(player1.number);
 };
 
+export const restartGame = () => {
+  resetGamefield()
+  forgetPlayers()
+
+
+  cleanField()
+  showInputs()
+  hideRestartButton()
+  hideWinner()
+  hideScore()
+}
+
 const hideInputs = () => {
   document.getElementById("inputs").setAttribute("class", "hidden");
 };
+const hideWinner = () => {
+  document.getElementById("whose_turn").setAttribute("class","hidden")
+}
+const hideRestartButton = () => {
+  document.getElementById("restart_game_button").setAttribute("class","hidden")
+}
+const showRestartButton = () => {
+  document.getElementById("restart_game_button").classList.remove("hidden")
+}
+const showInputs = () => {
+  document.getElementById("inputs").classList.remove("hidden")
+}
+const hideScore = () => {
+  document.getElementById("score").setAttribute("class","hidden")
+}
 
 const makeField = () => {
   // display hidden elements (grid and score in the header)
@@ -54,7 +96,9 @@ const makeField = () => {
   score.classList.remove("hidden")
   let whoseTurnField = document.getElementById("whose_turn")
   whoseTurnField.classList.remove("hidden")
-
+  // display usernames in the score field (not set by default)
+  document.getElementById("score_white").innerText = `${player1.name}: ${player1.pieces} pieces`
+  document.getElementById("score_black").innerText = `${player2.name}: ${player2.pieces} pieces`
   // generate cells
   for (let i = 0; i < gamefield.length; i++) {
     for (let j = 0; j < gamefield[i].length; j++) {
@@ -93,12 +137,19 @@ const makeField = () => {
   }
 };
 
+const cleanField = () => {
+  document.getElementById("grid").classList.add("hidden")
+  document.querySelectorAll(".cell").forEach(cell=>{
+    cell.remove()
+  })
+}
 
 
 
-let selectedpiece;
+
+let selectedPiece;
 const calculateMoves = (pieceId, playerNumber) => {
-  selectedpiece = pieceId;
+  selectedPiece = pieceId;
   let pieceCoordinatesOnGameboard = pieceId.split("-");
   let x = Number(pieceCoordinatesOnGameboard[0]);
   let y = Number(pieceCoordinatesOnGameboard[1]);
@@ -223,9 +274,24 @@ const makeMoveHandler = (moveId) => {
 
 const makeMove = (moveId) => {
   // get row and column of selected and target pieces
-  let [selectedRow, selectedCol] = selectedpiece.split("-").map(Number);
+  let [selectedRow, selectedCol] = selectedPiece.split("-").map(Number);
   let [targetRow, targetCol] = moveId.split("-").map(Number);
-
+  let whoMoves;
+  // set moving player for convenience
+  if (gamefield[selectedRow][selectedCol]===1) {
+    whoMoves = 1
+  } else if (gamefield[selectedRow][selectedCol]===2) {
+    whoMoves = 2
+  }
+  // set player who is moved at (can be 0 too)
+  let whoIsMovedAt;
+  if (gamefield[targetRow][targetCol]===1) {
+    whoIsMovedAt = 1
+  } else if (gamefield[targetRow][targetCol]===2) {
+    whoIsMovedAt = 2
+  } else if (gamefield[targetRow][targetCol]===0) {
+    whoIsMovedAt = 0
+  }
   // if player hit an enemy, update the amount of pieces players have
   // if player 1 jumps player 2
   if (gamefield[selectedRow][selectedCol]===1 && gamefield[targetRow][targetCol]===2) {
@@ -238,31 +304,42 @@ const makeMove = (moveId) => {
   gamefield[targetRow][targetCol] = gamefield[selectedRow][selectedCol];
   gamefield[selectedRow][selectedCol] = 0;
   // update styles
-  let selectedpieceElement = document.getElementById(selectedpiece);
-  let targetpieceElement = document.getElementById(moveId);
-  // remove .possible-move class from previously possible pieces and remove event listener
-  // also remove 'white' class if there was a white piece previously;
+  let selectedPieceElement = document.getElementById(selectedPiece);
+  let targetPieceElement = document.getElementById(moveId);
+  // remove .possible-move class from previously possible pieces
+  // remove 'white' class if there was a white piece previously;
   // and remove 'black' class if there was a black piece previously
-  let allPossiblepieces = document.querySelectorAll(".possible-move");
-  for (let i = 0; i < allPossiblepieces.length; i++) {
-    allPossiblepieces[i].classList.remove("possible-move");
-    if (allPossiblepieces[i].classList.contains("white")) {
-      allPossiblepieces[i].classList.remove("white")
-    } else if (allPossiblepieces[i].classList.contains("black")) {
-      allPossiblepieces[i].classList.remove("black")
+  let allPossiblePieces = document.querySelectorAll('.possible-move');
+  for (let i = 0; i < allPossiblePieces.length; i++) {
+    allPossiblePieces[i].classList.remove('possible-move');
+    allPossiblePieces[i].classList.remove('my')
+    if (allPossiblePieces[i].id===moveId) {
+      if (whoIsMovedAt===1) {
+        allPossiblePieces[i].classList.remove('white')
+        allPossiblePieces[i].classList.add('black')
+      } else if (whoIsMovedAt===2) {
+        allPossiblePieces[i].classList.remove('black')
+        allPossiblePieces[i].classList.add('white')
+      } else if (whoIsMovedAt===0) {
+        if (whoMoves===1) {
+          allPossiblePieces[i].classList.remove('black')
+          allPossiblePieces[i].classList.add('white')
+        } else if (whoMoves===2) {
+          allPossiblePieces[i].classList.remove('white');
+          allPossiblePieces[i].classList.add('black')
+        }
+      }
     }
   }
   // change class of target piece to the class of selected piece
-  targetpieceElement.classList.add(selectedpieceElement.classList[1]);
-  selectedpieceElement.classList.remove("white", "black");
+  targetPieceElement.classList.add(selectedPieceElement.classList[1]);
+  selectedPieceElement.classList.remove("white", "black", "my");
   // change turn
   if (currentTurn === player1.number) {
     setCurrentTurn(player2.number);
   } else if (currentTurn === player2.number) {
     setCurrentTurn(player1.number);
   }
-
-  console.log(gamefield);
 };
 
 const whitePieces = document.getElementsByClassName("white");

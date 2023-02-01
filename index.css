@@ -1,3 +1,20 @@
+@font-face {
+    font-family: 'DejaVu Serif';
+    src: url('./fonts/DejaVuSerif.woff2') format('woff2'),
+        url('./fonts/DejaVuSerif.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'DejaVu Serif';
+    src: url('./fonts/DejaVuSerif-Italic.woff2') format('woff2'),
+        url('./fonts/DejaVuSerif-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
 /* helper class to hide elements */
 .hidden {
     display: none !important;
@@ -5,6 +22,7 @@
 }
 /*  */
 body {
+    font-family: 'DejaVu Serif', sans-serif, serif, 'Times New Roman', Times, serif;
     margin-left: 10%;
     margin-right: 10%;
     background: black;
@@ -36,6 +54,23 @@ header {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+}
+
+#restart_game_button {
+    margin-top:5px;
+    color:rgb(34, 34, 34);
+    background-color: rgba(111, 168, 168);
+    padding:6px;
+    border-radius: 5px;
+    border: 2px;
+    transition: 200ms;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 1rem;
+}
+#restart_game_button:hover {
+    cursor: pointer;
+    background-color: rgba(95, 206, 206, 0.8);
 }
 
 #inputs {
@@ -73,7 +108,7 @@ header {
     padding:2rem;
 }
 .cell {
-    height:7rem;
+    height:5.3rem;
     border: 1px solid black;
     background-color: ivory;
     border-radius: 3px;
